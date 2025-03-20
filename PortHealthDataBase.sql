@@ -82,4 +82,33 @@ ALTER TABLE users ADD age INT;
 
 ALTER TABLE users ADD gender VARCHAR(10);
 
+SELECT 
+    a.id AS appointment_id,
+    a.patient_id,
+    a.doctor_id,
+    u.name AS doctor_name,
+    a.appointment_time,
+    a.notes,
+    a.status,
+    a.external_booking_link
+FROM 
+    appointments a
+JOIN 
+    users u ON a.doctor_id = u.id;
 
+CREATE VIEW appointment_details AS
+SELECT 
+    a.id AS appointment_id,
+    a.patient_id,
+    a.doctor_id,
+    u.name AS doctor_name,
+    a.appointment_time,
+    a.notes,
+    a.status,
+    a.external_booking_link
+FROM 
+    appointments a
+JOIN 
+    users u ON a.doctor_id = u.id;
+
+SELECT * FROM appointment_details;

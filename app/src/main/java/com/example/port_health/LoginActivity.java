@@ -37,10 +37,10 @@ public class LoginActivity extends AppCompatActivity {
                         if (databaseHelper.checkUser(email, password)) {
                             Toast.makeText(LoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
 
-                            // Redirect to MainActivity (Even if it doesn't exist yet)
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
-                            finish(); // Ensures the user can't navigate back to login
+                            finish();
+
                         } else {
                             Toast.makeText(LoginActivity.this, "Incorrect password", Toast.LENGTH_SHORT).show();
                         }

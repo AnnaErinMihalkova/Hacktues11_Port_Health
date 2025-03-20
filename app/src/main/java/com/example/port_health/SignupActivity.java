@@ -18,7 +18,6 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-
         editTextName = findViewById(R.id.editTextName);
         editTextSurname = findViewById(R.id.editTextSurname);
         editTextPhone = findViewById(R.id.editTextPhone);
@@ -39,17 +38,12 @@ public class SignupActivity extends AppCompatActivity {
                 if (name.isEmpty() || surname.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty()) {
                     Toast.makeText(SignupActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 } else {
-<<<<<<< HEAD
                     Toast.makeText(SignupActivity.this, "Sign up Successful! Please login.", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-=======
                     Toast.makeText(SignupActivity.this, "Sign up Successful!", Toast.LENGTH_SHORT).show();
                     Log.d("SIGNUP_DEBUG", "Redirecting to MoreInfoActivity");
-                    Intent intent = new Intent(SignupActivity.this, MoreInfoActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), MoreInfoActivity.class);
                     startActivity(intent);
->>>>>>> 3309c3a7e5ead17d70db403c38ddc52211a4e9ca
+                    finish();
                 }
             }
         });

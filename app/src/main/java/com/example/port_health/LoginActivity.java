@@ -1,6 +1,8 @@
 package com.example.port_health;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,8 +25,8 @@ public class LoginActivity extends AppCompatActivity {
         databaseHelper = new DatabaseHelper(this);
 
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
             public void onClick(View v) {
+                Log.d("LOGIN_DEBUG", "Submit button clicked");
                 String email = editTextEmail.getText().toString().trim();
                 String password = editTextPassword.getText().toString().trim();
 
@@ -34,6 +36,11 @@ public class LoginActivity extends AppCompatActivity {
                     if (databaseHelper.checkEmailExists(email)) {
                         if (databaseHelper.checkUser(email, password)) {
                             Toast.makeText(LoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
+
+                            // Redirect to MainActivity (Even if it doesn't exist yet)
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish(); // Ensures the user can't navigate back to login
                         } else {
                             Toast.makeText(LoginActivity.this, "Incorrect password", Toast.LENGTH_SHORT).show();
                         }

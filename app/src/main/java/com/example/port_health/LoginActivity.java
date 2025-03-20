@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (dbHelper.checkUser(email, password)) {
                     // Login successful, redirect to MainActivity
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                     finish(); // Close the LoginActivity
                 } else {

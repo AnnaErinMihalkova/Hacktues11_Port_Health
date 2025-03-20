@@ -17,11 +17,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // Create tables if not exists
+        String CREATE_USERS_TABLE = "CREATE TABLE IF NOT EXISTS users (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "email TEXT NOT NULL, " +
+                "password_hash TEXT NOT NULL)";
+        db.execSQL(CREATE_USERS_TABLE);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Handle database upgrade
+        if (oldVersion < newVersion) {
+            db.execSQL("DROP TABLE IF EXISTS users");
+            onCreate(db);
+        }
     }
 
     public boolean checkUser(String email, String password) {

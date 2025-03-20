@@ -19,9 +19,8 @@
 
         <activity android:name=".SignupActivity"/>
         <activity android:name=".LoginActivity" />
+        <activity android:name=".MainActivity" />
 
-        <!-- Register MainActivity -->
-        <activity android:name=".MainActivity"/>
 
     </application>
 

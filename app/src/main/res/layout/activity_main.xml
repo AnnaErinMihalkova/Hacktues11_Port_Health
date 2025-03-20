@@ -5,17 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Background Image -->
+    <!-- Фоново изображение -->
     <ImageView
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/login_background"
-        android:alpha="0.5"
-        />
+        android:alpha="0.5"/>
 
-    <!-- Sign up Card -->
+    <!-- Карта за бутони -->
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -34,85 +33,48 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- App Title -->
-            <TextView
+            <Button
+                android:id="@+id/btnMedicalHistory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sign up"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:textColor="@color/black"/>
+                android:text="Medical History"/>
 
-            <!-- Name Field -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btnAppointments"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Name">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:text="Appointments"/>
 
-            <!-- Surname Field -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btnPrescriptions"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Surname">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextSurname"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:text="Prescriptions"/>
 
-            <!-- Phone Field -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btnAllergies"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Phone Number">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextPhone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="phone"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:text="Allergies"/>
 
-            <!-- Email Field -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btnChat"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Email">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:text="Chat"/>
 
-            <!-- Password Field -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btnInfo"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Password">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:text="Info"/>
 
-            <!-- Submit Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonSubmit"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btnReminders"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Submit"
-                android:backgroundTint="@color/purple_500"
-                android:textColor="@android:color/white"
-                app:cornerRadius="12dp"
-                android:layout_marginTop="10dp"/>
+                android:text="Reminders"/>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

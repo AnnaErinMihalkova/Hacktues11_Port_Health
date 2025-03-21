@@ -1,6 +1,7 @@
 package com.example.port_health;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     private EditText editTextName, editTextSurname, editTextPhone, editTextEmail;
-    private Button buttonSubmit;
+    private Button buttonSubmit, buttonAppointments;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         editTextPhone = findViewById(R.id.editTextPhone);
         editTextEmail = findViewById(R.id.editTextEmail);
         buttonSubmit = findViewById(R.id.buttonSubmit);
+        buttonAppointments = findViewById(R.id.buttonAppointments);
 
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,6 +39,14 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(MainActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        buttonAppointments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AppointmentsActivity.class);
+                startActivity(intent);
             }
         });
     }

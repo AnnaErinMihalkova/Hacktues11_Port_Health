@@ -67,6 +67,27 @@ CREATE TABLE habits (
     description TEXT
 );
 
+CREAgiE TABLE doctor_visits (
+    id SERIAL PRIMARY KEY,
+    patient_id VARCHAR(255) NOT NULL,
+    diagnosis TEXT NOT NULL,
+    visit_cost DECIMAL(10,2),
+    need_followup BOOLEAN NOT NULL,
+    followup_date DATE,
+    recovery_notes TEXT,
+    preparations TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE prescriptions (
+    id SERIAL PRIMARY KEY,
+    visit_id INTEGER REFERENCES doctor_visits(id) ON DELETE CASCADE,
+    medicine VARCHAR(255) NOT NULL,
+    dosage VARCHAR(50) NOT NULL,
+    frequency VARCHAR(50) NOT NULL,
+    duration VARCHAR(50) NOT NULL
+);
+
 ALTER TABLE appointments ADD external_booking_link TEXT;
 
 INSERT INTO appointments (patient_id, doctor_id, appointment_time, external_booking_link, status) 

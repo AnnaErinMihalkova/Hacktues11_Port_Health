@@ -1,7 +1,10 @@
 import sys
 import requests
-from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QMessageBox
+from PyQt5.QtWidgets import (
+    QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QMessageBox
+)
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont
 
 from . import signup_dialog
 from . import config
@@ -10,38 +13,83 @@ class LoginDialog(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("PortHealth - Login")
-        self.setModal(False)  # using as modeless window
+        self.setModal(False)
+        self.setFixedSize(400, 300)
         self.token = None
         self.user = None
 
+        self.setStyleSheet("""
+            QDialog {
+                background-color: #f5f7fa;
+                border-radius: 10px;
+            }
+            QLabel {
+                color: #333;
+                font-size: 20px;
+                font-weight: bold;
+            }
+            QLineEdit {
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                font-size: 14px;
+                background-color: white;
+            }
+            QLineEdit:focus {
+                border: 1px solid #0078d7;
+            }
+            QPushButton {
+                padding: 10px;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: bold;
+                background-color: #0078d7;
+                color: white;
+            }
+            QPushButton:hover {
+                background-color: #005ea6;
+            }
+            QPushButton:pressed {
+                background-color: #004b8a;
+            }
+        """)
+
         # UI Elements
+        self.title_label = QLabel("Welcome to PortHealth")
+        self.title_label.setAlignment(Qt.AlignCenter)
+
         self.email_edit = QLineEdit()
         self.email_edit.setPlaceholderText("Email")
+
         self.password_edit = QLineEdit()
         self.password_edit.setPlaceholderText("Password")
         self.password_edit.setEchoMode(QLineEdit.Password)
 
         self.login_button = QPushButton("Login")
         self.signup_button = QPushButton("Sign Up")
-        # Info: using a button for sign up for simplicity
 
         # Layouts
         form_layout = QVBoxLayout()
-        form_layout.addWidget(QLabel("<h3>Login</h3>"), alignment=Qt.AlignCenter)
+        form_layout.setContentsMargins(30, 30, 30, 30)
+        form_layout.setSpacing(15)
+
+        form_layout.addWidget(self.title_label)
         form_layout.addWidget(self.email_edit)
         form_layout.addWidget(self.password_edit)
+
         btn_layout = QHBoxLayout()
+        btn_layout.setSpacing(10)
         btn_layout.addWidget(self.login_button)
         btn_layout.addWidget(self.signup_button)
+
         form_layout.addLayout(btn_layout)
         self.setLayout(form_layout)
 
         # Signals
         self.login_button.clicked.connect(self.perform_login)
         self.signup_button.clicked.connect(self.open_signup)
-    
+
     def perform_login(self):
-        """Handle login button click: authenticate with backend."""
         email = self.email_edit.text().strip()
         password = self.password_edit.text().strip()
         if not email or not password:
@@ -56,30 +104,14 @@ class LoginDialog(QDialog):
             data = response.json()
             self.token = data.get("token")
             self.user = data.get("user")
-            # Successful login
-            self.accept()  # close dialog with Accepted result
+            self.accept()
         else:
-            # Login failed: show error message from server if available
             try:
                 error_msg = response.json().get("message", "Login failed. Please check your credentials.")
             except ValueError:
                 error_msg = "Login failed. Please check your credentials."
             QMessageBox.warning(self, "Login Failed", error_msg)
-    
+
     def open_signup(self):
-        """Open the sign-up dialog."""
         dlg = signup_dialog.SignUpDialog()
-        # Center the signup dialog relative to login dialog
-        dlg.move(self.x() + (self.width() - dlg.width())//2, self.y() + (self.height() - dlg.height())//2)
-        if dlg.exec_() == QDialog.Accepted:
-            # If sign-up successful, populate the email field with the new email (for convenience)
-            new_email = getattr(dlg, "new_email", None)
-            if new_email:
-                self.email_edit.setText(new_email)
-                self.password_edit.setText("")  # clear password field
-                self.password_edit.setFocus()
-    
-    def reject(self):
-        """Override reject to quit application if login dialog is cancelled."""
-        QDialog.reject(self)
-        sys.exit(0)
+        dlg.move(self.x() + (self.width() - dlg.width())//2, self.y() + (self.height() - dlg.height()))

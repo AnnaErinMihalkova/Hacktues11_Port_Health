@@ -3,60 +3,27 @@ package com.example.port_health;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    private EditText editTextName, editTextSurname, editTextPhone, editTextEmail;
-    private Button buttonSubmit, buttonAppointments, buttonDoctorSignUp;
-
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editTextName = findViewById(R.id.editTextName);
-        editTextSurname = findViewById(R.id.editTextSurname);
-        editTextPhone = findViewById(R.id.editTextPhone);
-        editTextEmail = findViewById(R.id.editTextEmail);
-        buttonSubmit = findViewById(R.id.buttonSubmit);
-        buttonAppointments = findViewById(R.id.buttonAppointments);
-        buttonDoctorSignUp = findViewById(R.id.buttonDoctorSignUp);
+        // Връзка към бутоните от XML
+        Button btnAppointments = findViewById(R.id.btnAppointments);
+        Button btnPrescriptions = findViewById(R.id.btnPrescriptions);
+        Button btnMedicalHistory = findViewById(R.id.btnMedicalHistory);
+        Button btnChat = findViewById(R.id.btnChat);
+        Button btnInfo = findViewById(R.id.btnInfo);
 
-        buttonSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = editTextName.getText().toString().trim();
-                String surname = editTextSurname.getText().toString().trim();
-                String phone = editTextPhone.getText().toString().trim();
-                String email = editTextEmail.getText().toString().trim();
-
-                if (name.isEmpty() || surname.isEmpty() || phone.isEmpty() || email.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        buttonAppointments.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AppointmentsActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        buttonDoctorSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, DoctorActivity.class);
-                startActivity(intent);
-            }
-        });
+        // Стартиране на съответните Activity-та
+        btnAppointments.setOnClickListener(v -> startActivity(new Intent(this, AppointmentsActivity.class)));
+        btnPrescriptions.setOnClickListener(v -> startActivity(new Intent(this, PrescriptionsActivity.class)));
+        btnMedicalHistory.setOnClickListener(v -> startActivity(new Intent(this, MedicalHistoryActivity.class)));
+        btnChat.setOnClickListener(v -> startActivity(new Intent(this, ChatActivity.class)));
+        btnInfo.setOnClickListener(v -> startActivity(new Intent(this, InfoActivity.class)));
     }
 }

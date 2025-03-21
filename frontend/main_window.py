@@ -34,18 +34,18 @@ class MainWindow(QMainWindow):
         # Apply styles to QTabWidget
         self.tabs.setStyleSheet("""
             QTabBar::tab {
-                background: #e0e0e0;
+                background: #d5beda;
                 border-radius: 10px;
                 padding: 10px 20px;
                 margin: 2px;
                 font-size: 14px;
             }
             QTabBar::tab:selected {
-                background: #3498db;
+                background: #ab7db5;
                 color: white;
             }
             QTabBar::tab:hover {
-                background: #2980b9;
+                background: #a06dab;
                 color: white;
             }
             QTabWidget::pane {

@@ -25,8 +25,8 @@ def apply_dark_theme(app: QApplication):
     # Match tooltips to dark style
     app.setStyleSheet("""
         QToolTip {
-            color: #ffffff;
-            background-color: #2a82da;
+            color: #f5f7fa;
+            background-color: #ab7db5;
             border: 1px solid white;
         }
     """)

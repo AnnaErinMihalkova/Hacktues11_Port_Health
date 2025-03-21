@@ -14,7 +14,7 @@ class ChatPage(QWidget):
 
         self.setStyleSheet("""
             QPlainTextEdit {
-                background-color: #ffffff;
+                background-color: #d5beda;
                 border: 1px solid #ccc;
                 border-radius: 6px;
                 padding: 10px;
@@ -27,23 +27,23 @@ class ChatPage(QWidget):
                 border: 1px solid #ccc;
                 border-radius: 6px;
                 font-size: 14px;
-                background-color: #fcfcfc;
+                background-color: #d5beda;
             }
             QLineEdit:focus {
-                border: 1px solid #3498db;
+                border: 1px solid #ab7db5;
             }
             QPushButton {
-                background-color: #3498db;
+                background-color: #ab7db5;
                 color: white;
                 border-radius: 6px;
                 padding: 8px 16px;
                 font-weight: bold;
             }
             QPushButton:hover {
-                background-color: #2980b9;
+                background-color: #a06dab;
             }
             QPushButton:pressed {
-                background-color: #2471a3;
+                background-color: #955da2;
             }
             QLabel {
                 font-size: 14px;

@@ -27,20 +27,20 @@ class SignUpDialog(QDialog):
                 padding: 8px;
                 border: 1px solid #ccc;
                 border-radius: 6px;
-                background-color: #ffffff;
+                background-color: #e6e6ff;
             }
             QPushButton {
-                background-color: #3498db;
+                background-color: #ab7db5;
                 color: white;
                 border-radius: 6px;
                 padding: 8px 14px;
                 font-weight: bold;
             }
             QPushButton:hover {
-                background-color: #2980b9;
+                background-color: #a06dab;
             }
             QPushButton:pressed {
-                background-color: #2471a3;
+                background-color: #955da2;
             }
             QRadioButton {
                 padding: 4px;

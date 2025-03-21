@@ -48,31 +48,31 @@ class LoginDialog(QDialog):
             QLabel#titleLabel {
                 font-size: 22px;
                 font-weight: bold;
-                color: #2c3e50;
+                color: #ab7db5;
             }
             QLineEdit {
                 padding: 10px;
                 border: 1px solid #ccc;
                 border-radius: 6px;
                 font-size: 14px;
-                background-color: #ffffff;
+                background-color: #d5beda;
             }
             QLineEdit:focus {
-                border: 1px solid #2980b9;
+                border: 1px solid #955da2;
             }
             QPushButton {
                 padding: 10px;
                 border-radius: 6px;
                 font-size: 14px;
-                background-color: #3498db;
+                background-color: #ab7db5;
                 color: white;
                 font-weight: bold;
             }
             QPushButton:hover {
-                background-color: #2980b9;
+                background-color: #a06dab;
             }
             QPushButton:pressed {
-                background-color: #2471a3;
+                background-color: #955da2;
             }
         """)
 

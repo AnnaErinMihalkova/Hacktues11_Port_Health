@@ -20,7 +20,7 @@ class AppointmentsTab(QWidget):
                 color: #2c3e50;
             }
             QTableWidget {
-                background-color: #ffffff;
+                background-color: #d5beda;
                 border: 1px solid #ccc;
                 border-radius: 6px;
                 font-size: 13px;
@@ -30,20 +30,20 @@ class AppointmentsTab(QWidget):
                 border: 1px solid #ccc;
                 border-radius: 6px;
                 font-size: 13px;
-                background-color: #fcfcfc;
+                background-color: #d5beda;
             }
             QPushButton {
-                background-color: #3498db;
+                background-color: #ab7db5;
                 color: white;
                 border-radius: 6px;
                 padding: 8px 14px;
                 font-weight: bold;
             }
             QPushButton:hover {
-                background-color: #2980b9;
+                background-color: #a06dab;
             }
             QPushButton:pressed {
-                background-color: #2471a3;
+                background-color: #955da2;
             }
         """)
 

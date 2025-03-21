@@ -20,7 +20,7 @@ class LoginDialog(QDialog):
 
         self.setStyleSheet("""
             QDialog {
-                background-color: #f5f7fa;
+                background-color: #f0f2f5;
                 border-radius: 10px;
             }
             QLabel {
@@ -33,24 +33,24 @@ class LoginDialog(QDialog):
                 border: 1px solid #ccc;
                 border-radius: 8px;
                 font-size: 14px;
-                background-color: white;
+                background-color: #d5beda;
             }
             QLineEdit:focus {
-                border: 1px solid #0078d7;
+                border: 1px solid #955da2;
             }
             QPushButton {
                 padding: 10px;
                 border-radius: 8px;
                 font-size: 14px;
                 font-weight: bold;
-                background-color: #0078d7;
+                background-color: #ab7db5;
                 color: white;
             }
             QPushButton:hover {
-                background-color: #005ea6;
+                background-color: #a06dab;
             }
             QPushButton:pressed {
-                background-color: #004b8a;
+                background-color: #955da2;
             }
         """)
 

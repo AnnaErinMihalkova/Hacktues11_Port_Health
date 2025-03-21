@@ -1,40 +1,42 @@
 import requests
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QMessageBox
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QListWidget, QListWidgetItem, QStackedWidget, QMessageBox
 
 from . import config
+from .patient_profile_tab import PatientProfileTab
 
-class PatientProfileTab(QWidget):
-    def __init__(self, token: str, patient_id: str):
+class DoctorActivity(QWidget):
+    def __init__(self, token: str):
         super().__init__()
         self.token = token
-        self.patient_id = patient_id
         self.init_ui()
-        self.load_patient_info()
 
     def init_ui(self):
         self.layout = QVBoxLayout()
-        self.layout.addWidget(QLabel("<h3>Patient Profile</h3>"))
-        self.name_label = QLabel("Name: ")
-        self.email_label = QLabel("Email: ")
-        self.role_label = QLabel("Role: ")
-        self.theme_label = QLabel("Theme: ")
-        self.layout.addWidget(self.name_label)
-        self.layout.addWidget(self.email_label)
-        self.layout.addWidget(self.role_label)
-        self.layout.addWidget(self.theme_label)
+        self.patient_list = QListWidget()
+        self.patient_list.itemClicked.connect(self.display_patient_profile)
+        self.layout.addWidget(self.patient_list)
+        self.profile_stack = QStackedWidget()
+        self.layout.addWidget(self.profile_stack)
         self.setLayout(self.layout)
+        self.load_patients()
 
-    def load_patient_info(self):
+    def load_patients(self):
         try:
-            resp = requests.get(f"{config.API_URL}/patients/{self.patient_id}",
+            resp = requests.get(f"{config.API_URL}/patients",
                                 headers={"Authorization": f"Bearer {self.token}"})
             if resp.status_code == 200:
-                patient = resp.json().get("patient", {})
-                self.name_label.setText(f"Name: {patient.get('name', '')}")
-                self.email_label.setText(f"Email: {patient.get('email', '')}")
-                self.role_label.setText(f"Role: {patient.get('role', '').capitalize()}")
-                self.theme_label.setText(f"Theme: {patient.get('theme', '').capitalize()}")
+                patients = resp.json().get("patients", [])
+                for patient in patients:
+                    item = QListWidgetItem(patient.get("name", ""))
+                    item.setData(1, patient.get("id", ""))
+                    self.patient_list.addItem(item)
             else:
-                QMessageBox.warning(self, "Error", "Failed to load patient information.")
+                QMessageBox.warning(self, "Error", "Failed to load patients.")
         except Exception as e:
             QMessageBox.critical(self, "Network Error", f"Could not connect to server: {e}")
+
+    def display_patient_profile(self, item):
+        patient_id = item.data(1)
+        profile_tab = PatientProfileTab(self.token, patient_id)
+        self.profile_stack.addWidget(profile_tab)
+        self.profile_stack.setCurrentWidget(profile_tab)

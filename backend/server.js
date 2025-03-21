@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const cron = require('node-cron');
 const { Server: WebSocketServer } = require('ws');
+const doctorsRouter = require('./routes/doctors');
 
 const app = express();
 const server = http.createServer(app);
@@ -18,6 +19,7 @@ const pool = require('./db');
 
 // Middleware for JSON parsing
 app.use(express.json());
+app.use('/doctors', doctorsRouter);
 
 // Authentication middleware for protected routes
 const authenticate = (req, res, next) => {
@@ -47,8 +49,38 @@ app.use('/appointments', authenticate, appointmentRoutes);
 app.use('/prescriptions', authenticate, prescriptionRoutes);
 app.use('/chat', authenticate, chatRoutes);
 
+// New messages endpoint (for retrieving chat history)
+const messagesRouter = require('./routes/messages');
+app.use('/messages', authenticate, messagesRouter);
+
 // WebSocket connections map (userId -> socket)
 const clients = new Map();
+
+/**
+ * Compute a room identifier for a chat between a doctor and a patient.
+ * Returns a string in the format "minId-maxId".
+ */
+function computeRoom(doctorId, patientId) {
+  const minId = Math.min(doctorId, patientId);
+  const maxId = Math.max(doctorId, patientId);
+  return `${minId}-${maxId}`;
+}
+
+/**
+ * Save a chat message to the database, including the room info.
+ * @param {Object} message - Contains: from_user, to_user, content, room.
+ */
+async function saveMessage(message) {
+  try {
+    await pool.query(
+      'INSERT INTO messages(from_user, to_user, content, room) VALUES($1, $2, $3, $4)',
+      [message.from_user, message.to_user, message.content, message.room]
+    );
+    console.log(`Message from ${message.from_user} to ${message.to_user} saved in room ${message.room}.`);
+  } catch (err) {
+    console.error('DB Error inserting message:', err);
+  }
+}
 
 wss.on('connection', (socket, request) => {
   // Parse token from query params
@@ -68,6 +100,8 @@ wss.on('connection', (socket, request) => {
   // Store connection
   socket.userId = user.id;
   clients.set(user.id, socket);
+  console.log(`User ${user.id} connected via WebSocket`);
+
   // Handle incoming messages from this client
   socket.on('message', async (msg) => {
     try {
@@ -76,26 +110,47 @@ wss.on('connection', (socket, request) => {
       const content = data.content;
       if (!toId || !content) return;
       const fromId = user.id;
-      // Only allow sending if toId is provided and content not empty.
-      // (Authorization between patient-doctor is assumed via contacts)
-      // Save message to DB
-      try {
-        await pool.query('INSERT INTO messages(from_user, to_user, content) VALUES($1, $2, $3)', [fromId, toId, content]);
-      } catch (dbErr) {
-        console.error('DB Error inserting message:', dbErr);
+
+      // Determine doctor and patient IDs based on roles:
+      let doctorId, patientId;
+      if (user.role === 'doctor') {
+        // When a doctor sends a message, their ID is the doctor and target is patient.
+        doctorId = user.id;
+        patientId = toId;
+      } else if (user.role === 'patient') {
+        // When a patient sends a message, use assigned doctor if available.
+        if (user.doctor && user.doctor.id) {
+          doctorId = user.doctor.id;
+        } else {
+          // Fallback: assume the target is the doctor.
+          doctorId = toId;
+        }
+        patientId = user.id;
       }
+
+      // Compute room ID (doctorId always first)
+      const room = computeRoom(doctorId, patientId);
+
+      // Save message to DB with room info
+      await saveMessage({ from_user: fromId, to_user: toId, content: content, room: room });
+
       // Forward message to recipient if online
       if (clients.has(toId)) {
-        const outMsg = { from: fromId, content: content };
+        const outMsg = { from: fromId, content: content, room: room };
         clients.get(toId).send(JSON.stringify(outMsg));
+        console.log(`Forwarded message from ${fromId} to ${toId} in room ${room}`);
+      } else {
+        console.log(`User ${toId} not connected, message saved in room ${room} but not forwarded`);
       }
     } catch (e) {
       console.error('Error handling WS message:', e);
     }
   });
+
   socket.on('close', () => {
     if (socket.userId) {
       clients.delete(socket.userId);
+      console.log(`User ${socket.userId} disconnected from WebSocket`);
     }
   });
 });
@@ -199,6 +254,7 @@ async function initDB() {
     from_user INTEGER REFERENCES users(id) ON DELETE CASCADE,
     to_user INTEGER REFERENCES users(id) ON DELETE CASCADE,
     content TEXT,
+    room TEXT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`);
 }

@@ -113,5 +113,19 @@ class LoginDialog(QDialog):
             QMessageBox.warning(self, "Login Failed", error_msg)
 
     def open_signup(self):
-        dlg = signup_dialog.SignUpDialog()
-        dlg.move(self.x() + (self.width() - dlg.width())//2, self.y() + (self.height() - dlg.height()))
+        """Open the sign-up dialog."""
+        from .signup_dialog import SignUpDialog  # safe import here
+
+        dlg = SignUpDialog()
+        dlg.setModal(True)
+        dlg.move(
+            self.x() + (self.width() - dlg.width()) // 2,
+            self.y() + (self.height() - dlg.height()) // 2
+        )
+
+        if dlg.exec_() == QDialog.Accepted:
+            # Signup success → prefill login email
+            new_email = getattr(dlg, "new_email", None)
+            if new_email:
+                self.email_edit.setText(new_email)
+                self.password_edit.setFocus()

@@ -52,7 +52,11 @@
                 android:layout_height="wrap_content"
                 android:text="Prescriptions"/>
 
-
+            <Button
+                android:id="@+id/buttonDoctorSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Doctor Sign Up" />
 
             <Button
                 android:id="@+id/btnChat"

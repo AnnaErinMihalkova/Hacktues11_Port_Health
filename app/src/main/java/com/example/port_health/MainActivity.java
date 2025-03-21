@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     private EditText editTextName, editTextSurname, editTextPhone, editTextEmail;
-    private Button buttonSubmit, buttonAppointments;
+    private Button buttonSubmit, buttonAppointments, buttonDoctorSignUp;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         editTextEmail = findViewById(R.id.editTextEmail);
         buttonSubmit = findViewById(R.id.buttonSubmit);
         buttonAppointments = findViewById(R.id.buttonAppointments);
+        buttonDoctorSignUp = findViewById(R.id.buttonDoctorSignUp);
 
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,6 +47,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AppointmentsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        buttonDoctorSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DoctorActivity.class);
                 startActivity(intent);
             }
         });

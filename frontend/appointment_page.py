@@ -1,7 +1,7 @@
 import requests
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QPushButton,
-    QTableWidget, QTableWidgetItem, QDateTimeEdit, QLineEdit, QMessageBox, QLabel
+    QTableWidget, QTableWidgetItem, QDateTimeEdit, QLineEdit, QMessageBox, QLabel, QDialog, QTextEdit
 )
 from PyQt5.QtCore import QDateTime, Qt
 from config import API_URL
@@ -51,7 +51,6 @@ class AppointmentsPage(QWidget):
             }
         """)
 
-        # --- Table for Appointments ---
         self.table = QTableWidget(0, 3)
         if user.get("role") == "doctor":
             self.table.setHorizontalHeaderLabels(["Date/Time", "Patient", "Description"])
@@ -63,7 +62,6 @@ class AppointmentsPage(QWidget):
         self.table.verticalHeader().setVisible(False)
         self.table.cellClicked.connect(self.load_appointment_to_form)
 
-        # --- Form Inputs ---
         self.datetime_edit = QDateTimeEdit(QDateTime.currentDateTime())
         self.datetime_edit.setCalendarPopup(True)
         self.datetime_edit.setDisplayFormat("yyyy-MM-dd HH:mm")
@@ -77,7 +75,6 @@ class AppointmentsPage(QWidget):
         save_button.clicked.connect(self.save_appointment)
         new_button.clicked.connect(self.new_appointment)
 
-        # --- Form Layout ---
         form_layout = QFormLayout()
         form_layout.setLabelAlignment(Qt.AlignRight)
         form_layout.setFormAlignment(Qt.AlignLeft)
@@ -89,7 +86,6 @@ class AppointmentsPage(QWidget):
         btn_layout.addWidget(new_button)
         form_layout.addRow(btn_layout)
 
-        # --- Main Layout ---
         main_layout = QVBoxLayout()
         title = QLabel("📋 Your Appointments")
         title.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
@@ -138,6 +134,12 @@ class AppointmentsPage(QWidget):
                 self.datetime_edit.setDateTime(qdt)
             self.desc_edit.setText(app.get("description", ""))
 
+            if self.user.get("role") == "doctor":
+                patient_id = app.get("patient", {}).get("id")
+                if patient_id:
+                    dialog = PatientProfileDialog(patient_id, self.token, self)
+                    dialog.exec_()
+
     def save_appointment(self):
         """Send create/update request to the server for the appointment."""
         payload = {
@@ -172,13 +174,46 @@ class AppointmentsPage(QWidget):
         self.datetime_edit.setDateTime(QDateTime.currentDateTime())
         self.desc_edit.clear()
 
-        def load_taken_slots(self, doctor_id):
-    try:
-        response = requests.get(f"{API_URL}/appointments/taken/{doctor_id}")
-        if response.status_code == 200:
-            self.taken_slots = set(response.json().get("takenSlots", []))
-        else:
+    def load_taken_slots(self, doctor_id):
+        try:
+            response = requests.get(f"{API_URL}/appointments/taken/{doctor_id}")
+            if response.status_code == 200:
+                self.taken_slots = set(response.json().get("takenSlots", []))
+            else:
+                self.taken_slots = set()
+        except Exception:
             self.taken_slots = set()
-    except Exception:
-        self.taken_slots = set()
 
+class PatientProfileDialog(QDialog):
+    def __init__(self, patient_id, token, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Patient Profile")
+        self.setMinimumWidth(400)
+        self.token = token
+        self.patient_id = patient_id
+
+        layout = QVBoxLayout()
+        self.text_area = QTextEdit()
+        self.text_area.setReadOnly(True)
+        layout.addWidget(QLabel("Patient Information:"))
+        layout.addWidget(self.text_area)
+        self.setLayout(layout)
+
+        self.load_patient_profile()
+
+    def load_patient_profile(self):
+        try:
+            res = requests.get(f"{API_URL}/patients/{self.patient_id}", headers={"Authorization": f"Bearer {self.token}"})
+            if res.status_code == 200:
+                data = res.json()
+                profile_text = f"""👤 Name: {data.get("name", "N/A")}
+📅 Age: {data.get("age", "N/A")}
+⚖️ Weight: {data.get("weight", "N/A")}
+🌿 Allergies: {data.get("allergies", "N/A")}
+🩺 Chronic Diseases: {data.get("chronic_diseases", "N/A")}
+"""
+                self.text_area.setText(profile_text)
+            else:
+                self.text_area.setText("Failed to load patient profile.")
+        except Exception as e:
+            self.text_area.setText(f"Error: {e}")

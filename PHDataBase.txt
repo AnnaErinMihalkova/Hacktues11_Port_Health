@@ -1,4 +1,4 @@
-create table info(
+create table info_patient(
     gender varchar(10);
     age int not null;
     name varchar not null;
@@ -9,3 +9,10 @@ create table info(
     allergies text;
     phone_number varchar(20) not null;
 );
+
+create table info_doctor(
+    doctor_specialty text not null;
+    work_city text;
+    work_place text;
+    uin varchar(10);
+)

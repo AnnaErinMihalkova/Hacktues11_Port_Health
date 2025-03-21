@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QPushButton, QVBoxLayout, QWidget
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget
+import requests
 from . import appointments_tab
 from .prescriptions_tab import PrescriptionsTab
 from .chat_tab import ChatPage
@@ -25,14 +25,12 @@ class MainWindow(QMainWindow):
         else:
             self.apply_light_theme()
 
-        # Create main tab widget
+        # Create main tab widget immediately
         self.tabs = QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
         self.tabs.setTabShape(QTabWidget.Rounded)
         self.tabs.setMovable(False)
         self.tabs.setDocumentMode(True)
-
-        # Apply styles to QTabWidget
         self.tabs.setStyleSheet("""
             QTabBar::tab {
                 background: #d5beda;
@@ -62,13 +60,13 @@ class MainWindow(QMainWindow):
         self.chat_tab = ChatPage(self.token, self.user)
         self.profile_tab = profile_tab.ProfileTab(self.token, self.user)
 
-        # Add tabs to tab widget
+        # Add tabs to the tab widget
         self.tabs.addTab(self.appointments_tab, "Appointments")
         self.tabs.addTab(self.prescriptions_tab, "Prescriptions")
         self.tabs.addTab(self.chat_tab, "Chat")
         self.tabs.addTab(self.profile_tab, "Profile")
 
-        # Set central widget
+        # Set the tab widget as the central widget
         self.setCentralWidget(self.tabs)
 
         # If user is a doctor, update chat contacts
@@ -88,9 +86,8 @@ class MainWindow(QMainWindow):
     def handle_incoming_message(self, message):
         """Handle incoming messages from the chat client thread."""
         try:
-            data = message  # If message is a JSON string, you can parse it here if needed.
-            # Directly append the message text to the chat log.
-            self.chat_tab.append_message(data)
+            # Directly pass the message to the chat page's append method.
+            self.chat_tab.append_message(message)
         except Exception as e:
             print("Error handling incoming message:", e)
 
@@ -122,14 +119,15 @@ class MainWindow(QMainWindow):
         self.close()
 
     def apply_light_theme(self):
-        """Optional light theme styling."""
+        """Apply a simple light theme."""
         QApplication.instance().setStyleSheet("""
             QMainWindow {
                 background-color: #f7f9fb;
             }
         """)
-    
+
     def create_button(self, text):
+        """Helper function to create styled buttons (if needed)."""
         button = QPushButton(text)
         button.setStyleSheet("""
             QPushButton {
@@ -146,33 +144,3 @@ class MainWindow(QMainWindow):
             }
         """)
         return button
-
-    def __init__(self, token: str, user: dict):
-        super().__init__()
-        # ...existing code...
-
-        # Create all tab pages
-        self.appointments_tab = appointments_tab.AppointmentsTab(token, user)
-        self.prescriptions_tab = PrescriptionsTab(token, user)
-        self.chat_tab = ChatPage(token, user)
-        self.profile_tab = profile_tab.ProfileTab(token, user)
-
-        # Add tabs to tab widget
-        self.tabs.addTab(self.appointments_tab, "Appointments")
-        self.tabs.addTab(self.prescriptions_tab, "Prescriptions")
-        self.tabs.addTab(self.chat_tab, "Chat")
-        self.tabs.addTab(self.profile_tab, "Profile")
-
-        # Create buttons with pressed effect
-        self.prescriptions_button = self.create_button("Prescriptions")
-        self.profile_button = self.create_button("Profile")
-
-        # Add buttons to layout (example layout, adjust as needed)
-        layout = QVBoxLayout()
-        layout.addWidget(self.prescriptions_button)
-        layout.addWidget(self.profile_button)
-        container = QWidget()
-        container.setLayout(layout)
-        self.setCentralWidget(container)
-
- 

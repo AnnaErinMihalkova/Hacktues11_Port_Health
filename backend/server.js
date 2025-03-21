@@ -21,7 +21,7 @@ const pool = require('./db');
 app.use(express.json());
 app.use('/doctors', doctorsRouter);
 
-// Authentication middleware for protected routes
+// **Define the authentication middleware here before any route uses it**
 const authenticate = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   if (!authHeader) return res.status(401).json({ message: 'No token provided' });
@@ -49,6 +49,10 @@ app.use('/appointments', authenticate, appointmentRoutes);
 app.use('/prescriptions', authenticate, prescriptionRoutes);
 app.use('/chat', authenticate, chatRoutes);
 
+// **Mount the available-appointments router after "authenticate" is defined**
+const availableAppointmentsRouter = require('./routes/available_appointments');
+app.use('/available-appointments', authenticate, availableAppointmentsRouter);
+
 // New messages endpoint (for retrieving chat history)
 const messagesRouter = require('./routes/messages');
 app.use('/messages', authenticate, messagesRouter);
@@ -67,7 +71,7 @@ function computeRoom(doctorId, patientId) {
 }
 
 /**
- * Save a chat message to the database, including the room info.
+ * Save a chat message to the database, including room info.
  * @param {Object} message - Contains: from_user, to_user, content, room.
  */
 async function saveMessage(message) {
@@ -111,36 +115,32 @@ wss.on('connection', (socket, request) => {
       if (!toId || !content) return;
       const fromId = user.id;
 
-      // Determine doctor and patient IDs based on roles:
+      // Determine doctor and patient IDs based on sender's role.
       let doctorId, patientId;
       if (user.role === 'doctor') {
-        // When a doctor sends a message, their ID is the doctor and target is patient.
         doctorId = user.id;
         patientId = toId;
       } else if (user.role === 'patient') {
-        // When a patient sends a message, use assigned doctor if available.
         if (user.doctor && user.doctor.id) {
           doctorId = user.doctor.id;
         } else {
-          // Fallback: assume the target is the doctor.
-          doctorId = toId;
+          doctorId = toId; // fallback if no assigned doctor
         }
         patientId = user.id;
       }
-
-      // Compute room ID (doctorId always first)
+      // Compute the room ID (doctorId always first)
       const room = computeRoom(doctorId, patientId);
 
-      // Save message to DB with room info
+      // Save the message with room information.
       await saveMessage({ from_user: fromId, to_user: toId, content: content, room: room });
 
-      // Forward message to recipient if online
+      // Forward message to recipient if online.
       if (clients.has(toId)) {
         const outMsg = { from: fromId, content: content, room: room };
         clients.get(toId).send(JSON.stringify(outMsg));
         console.log(`Forwarded message from ${fromId} to ${toId} in room ${room}`);
       } else {
-        console.log(`User ${toId} not connected, message saved in room ${room} but not forwarded`);
+        console.log(`User ${toId} not connected; message saved in room ${room} but not forwarded`);
       }
     } catch (e) {
       console.error('Error handling WS message:', e);
@@ -185,10 +185,8 @@ cron.schedule('* * * * *', async () => {
         const patientName = row.patient_name;
         const doctorName = row.doctor_name;
         const doctorId = row.doctor_id;
-        // Format appointment time
         const apptTime = new Date(row.datetime).toLocaleString();
         const reminderText = `Dear ${patientName}, this is a reminder of your appointment with Dr. ${doctorName} at ${apptTime}.`;
-        // Send email to patient
         if (transporter) {
           try {
             await transporter.sendMail({
@@ -203,18 +201,15 @@ cron.schedule('* * * * *', async () => {
         } else {
           console.log('Reminder email to', patientEmail, ':', reminderText);
         }
-        // Send WebSocket notification to patient if online
         if (clients.has(patientId)) {
           const notif = { type: 'reminder', message: `Reminder: ${reminderText}` };
           clients.get(patientId).send(JSON.stringify(notif));
         }
-        // Send WebSocket notification to doctor if online
         if (clients.has(doctorId)) {
           const notif2 = { type: 'reminder', message: `Reminder: You have an upcoming appointment with ${patientName} at ${apptTime}.` };
           clients.get(doctorId).send(JSON.stringify(notif2));
         }
       }
-      // Mark these appointments as reminded
       await pool.query('UPDATE appointments SET reminded = true WHERE id = ANY($1)', [remindIds]);
     }
   } catch (err) {
@@ -241,13 +236,16 @@ async function initDB() {
     reason TEXT,
     reminded BOOLEAN DEFAULT FALSE
   )`);
+  // Updated prescriptions table with start_date, end_date, and dose_times (stored as an array of text)
   await pool.query(`CREATE TABLE IF NOT EXISTS prescriptions (
     id SERIAL PRIMARY KEY,
     patient_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     doctor_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    date DATE,
+    start_date DATE,
+    end_date DATE,
     medication TEXT,
-    dosage TEXT
+    dosage TEXT,
+    dose_times TEXT[]
   )`);
   await pool.query(`CREATE TABLE IF NOT EXISTS messages (
     id SERIAL PRIMARY KEY,

@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import (
     QLineEdit, QPushButton, QPlainTextEdit, QMessageBox, QComboBox
 )
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont
 
 # Update API_BASE_URL to point to your backend on port 4000
 API_BASE_URL = "http://localhost:4000"
@@ -34,42 +35,58 @@ class ChatPage(QWidget):
         self.is_doctor = (user.get("role") == "doctor")
         self.currentRoom = None  # stores the current conversation room
 
+        # Set a modern gradient background and font styles
         self.setStyleSheet("""
+            QWidget {
+                background: qlineargradient(
+                    spread:pad, x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #ffffff, stop:1 #f0f2f5);
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 14px;
+            }
             QPlainTextEdit {
-                background-color: #d5beda;
+                background-color: #ffffff;
                 border: 1px solid #ccc;
-                border-radius: 6px;
-                padding: 10px;
+                border-radius: 8px;
+                padding: 12px;
                 font-family: Consolas, monospace;
-                font-size: 13px;
-                color: #2c3e50;
+                font-size: 14px;
+                color: #333;
             }
             QLineEdit {
-                padding: 8px;
+                background-color: #ffffff;
                 border: 1px solid #ccc;
-                border-radius: 6px;
+                border-radius: 8px;
+                padding: 10px;
                 font-size: 14px;
-                background-color: #d5beda;
             }
             QLineEdit:focus {
                 border: 1px solid #ab7db5;
             }
             QPushButton {
-                background-color: #ab7db5;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #ab7db5, stop:1 #955da2);
                 color: white;
-                border-radius: 6px;
-                padding: 8px 16px;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 20px;
+                font-size: 14px;
                 font-weight: bold;
             }
             QPushButton:hover {
-                background-color: #a06dab;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #a06dab, stop:1 #8e5ea7);
             }
             QPushButton:pressed {
-                background-color: #955da2;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #955da2, stop:1 #7a4d8a);
+            }
+            QComboBox {
+                background-color: #ffffff;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                padding: 8px;
+                font-size: 14px;
             }
             QLabel {
-                font-size: 14px;
-                color: #2c3e50;
+                color: #555;
             }
         """)
 
@@ -77,7 +94,7 @@ class ChatPage(QWidget):
         self.chat_log = QPlainTextEdit()
         self.chat_log.setReadOnly(True)
         self.input_field = QLineEdit()
-        self.input_field.setPlaceholderText("Type a message...")
+        self.input_field.setPlaceholderText("Type your message here...")
         self.send_button = QPushButton("Send")
         self.load_history_button = QPushButton("Load History")
 
@@ -86,14 +103,14 @@ class ChatPage(QWidget):
         if self.is_doctor:
             # For doctors: use a combo box to select a patient.
             self.target_combo = QComboBox()
-            self.target_combo.setFixedWidth(200)
+            self.target_combo.setFixedWidth(220)
             self.target_combo.addItem("Select Patient", None)
             top_layout.addWidget(QLabel("To:"))
             top_layout.addWidget(self.target_combo)
             # When selection changes, load conversation history.
             self.target_combo.currentIndexChanged.connect(self.handle_contact_change)
         else:
-            # For patients: if doctor info exists, display it; otherwise, show input and a join button.
+            # For patients: if doctor info exists, display it; otherwise, show input with a join button.
             doctor = self.user.get("doctor")
             if doctor and doctor.get("id") and doctor.get("name"):
                 top_label = QLabel(f"Chat with Dr. {doctor['name']}")
@@ -102,9 +119,9 @@ class ChatPage(QWidget):
             else:
                 self.doctor_name_input = QLineEdit()
                 self.doctor_name_input.setPlaceholderText("Enter Doctor Name")
-                self.doctor_name_input.setFixedWidth(200)
+                self.doctor_name_input.setFixedWidth(220)
                 self.join_chat_button = QPushButton("Join Chat")
-                self.join_chat_button.setFixedWidth(100)
+                self.join_chat_button.setFixedWidth(120)
                 self.join_chat_button.clicked.connect(self.join_chat)
                 top_layout.addWidget(QLabel("Doctor Name:"))
                 top_layout.addWidget(self.doctor_name_input)
@@ -120,8 +137,8 @@ class ChatPage(QWidget):
 
         # --- Main Layout ---
         main_layout = QVBoxLayout()
-        main_layout.setContentsMargins(20, 20, 20, 20)
-        main_layout.setSpacing(15)
+        main_layout.setContentsMargins(30, 30, 30, 30)
+        main_layout.setSpacing(20)
         main_layout.addLayout(top_layout)
         main_layout.addWidget(self.chat_log)
         main_layout.addLayout(input_layout)

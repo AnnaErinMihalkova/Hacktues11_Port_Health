@@ -21,6 +21,13 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".MoreInfoActivity" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".DoctorActivity" />
+        <activity android:name=".AppointmentsActivity" />
+        <activity android:name=".ChatActivity" />
+        <activity android:name=".InfoActivity" />
+        <activity android:name=".MedicalHistoryActivity" />
+        <activity android:name=".PrescriptionsActivity" />
+
 
 
     </application>

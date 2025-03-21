@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Фоново изображение -->
+    <!-- Background Image -->
     <ImageView
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
@@ -14,60 +14,54 @@
         android:src="@drawable/login_background"
         android:alpha="0.5" />
 
-    <!-- Карта с бутони -->
+    <!-- CardView Container for Buttons -->
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="8dp"
         android:layout_marginStart="35dp"
         android:layout_marginEnd="35dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:padding="20dp">
 
+        <!-- Vertical layout for buttons -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:padding="10dp">
+            android:padding="16dp">
 
             <Button
                 android:id="@+id/btnMedicalHistory"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Medical History" />
+                android:layout_height="match_parent"
+                android:text="Medical History"
+                android:layout_marginBottom="12dp"/>
 
             <Button
-                android:id="@+id/btnAppointments"
+                android:id="@+id/buttonAppointments"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Appointments" />
+                android:layout_height="match_parent"
+                android:text="Appointments"
+                android:layout_marginBottom="12dp"/>
 
             <Button
                 android:id="@+id/btnPrescriptions"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Prescriptions" />
-
-
-            <Button
-                android:id="@+id/btnChat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Chat" />
+                android:layout_height="match_parent"
+                android:text="Prescriptions"
+                android:layout_marginBottom="12dp"/>
 
             <Button
                 android:id="@+id/btnInfo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="Info" />
-
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

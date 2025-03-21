@@ -19,12 +19,10 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);  // Only call once
+        setContentView(R.layout.activity_signup);
 
-        // Initialize the Material dropdown (AutoCompleteTextView)
         autoCompleteTextView = findViewById(R.id.autoCompleteTextView);
 
-        // Create adapter from resource array (with default empty option)
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.options_array, android.R.layout.simple_dropdown_item_1line);
         autoCompleteTextView.setAdapter(adapter);
@@ -64,7 +62,6 @@ public class SignupActivity extends AppCompatActivity {
                         // Launch MainActivity (or whichever main page activity you have) if the user is a Doctor
                         intent = new Intent(getApplicationContext(), MainActivity.class);
                     } else {
-                        // Optional: Handle unexpected selection or do nothing.
                         Toast.makeText(SignupActivity.this, "Please select a valid option", Toast.LENGTH_SHORT).show();
                         return;
                     }

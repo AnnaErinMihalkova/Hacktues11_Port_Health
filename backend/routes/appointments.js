@@ -88,4 +88,20 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+router.get('/taken/:doctorId', async (req, res) => {
+  try {
+    const doctorId = req.params.doctorId;
+
+    const result = await pool.query(
+      'SELECT to_char(datetime, \'YYYY-MM-DD"T"HH24:MI\') as datetime FROM appointments WHERE doctor_id = $1',
+      [doctorId]
+    );
+
+    res.json({ takenSlots: result.rows.map(r => r.datetime) });
+  } catch (err) {
+    console.error('Error fetching taken slots:', err);
+    res.status(500).json({ message: 'Server error fetching taken slots' });
+  }
+});
+
 module.exports = router;

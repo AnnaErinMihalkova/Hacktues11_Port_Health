@@ -13,6 +13,7 @@ class AppointmentsPage(QWidget):
         self.user = user
         self.current_edit_id = None
         self.appointments = []
+        self.load_taken_slots(self.user["doctor_id"])
 
         # --- StyleSheet ---
         self.setStyleSheet("""
@@ -145,6 +146,10 @@ class AppointmentsPage(QWidget):
         }
         headers = {"Authorization": f"Bearer {self.token}"}
         try:
+            selected_time = self.datetime_edit.dateTime().toString(Qt.ISODate)
+            if selected_time in self.taken_slots:
+                QMessageBox.warning(self, "Времето е заето", "Този час вече е зает от друг пациент.")
+                return
             if self.current_edit_id:
                 url = f"{API_URL}/appointments/{self.current_edit_id}"
                 res = requests.put(url, json=payload, headers=headers)
@@ -166,3 +171,14 @@ class AppointmentsPage(QWidget):
         self.current_edit_id = None
         self.datetime_edit.setDateTime(QDateTime.currentDateTime())
         self.desc_edit.clear()
+
+        def load_taken_slots(self, doctor_id):
+    try:
+        response = requests.get(f"{API_URL}/appointments/taken/{doctor_id}")
+        if response.status_code == 200:
+            self.taken_slots = set(response.json().get("takenSlots", []))
+        else:
+            self.taken_slots = set()
+    except Exception:
+        self.taken_slots = set()
+

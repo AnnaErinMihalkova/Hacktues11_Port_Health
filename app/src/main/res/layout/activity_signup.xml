@@ -15,6 +15,7 @@
         android:alpha="0.5"
         />
 
+
     <!-- Sign up Card -->
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
@@ -62,6 +63,22 @@
                 android:hint="Surname">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextSurname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- Material Exposed Dropdown Menu -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/menu_dropdown"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Option"
+                app:endIconMode="dropdown_menu">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </com.google.android.material.textfield.TextInputLayout>

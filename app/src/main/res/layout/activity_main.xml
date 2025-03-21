@@ -28,10 +28,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:padding="20dp">
 
-        <LinearLayout
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <Button
                 android:id="@+id/btnMedicalHistory"
@@ -41,7 +42,7 @@
 
             <Button
                 android:id="@+id/btnAppointments"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Appointments"/>
 
@@ -51,7 +52,11 @@
                 android:layout_height="wrap_content"
                 android:text="Prescriptions"/>
 
-
+            <Button
+                android:id="@+id/buttonDoctorSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Doctor Sign Up" />
 
             <Button
                 android:id="@+id/btnChat"

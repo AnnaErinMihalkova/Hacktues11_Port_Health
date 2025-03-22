@@ -21,7 +21,7 @@ const pool = require('./db');
 app.use(express.json());
 app.use('/doctors', doctorsRouter);
 
-// **Define the authentication middleware here before any route uses it**
+// Define the authentication middleware BEFORE using it in any routes.
 const authenticate = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   if (!authHeader) return res.status(401).json({ message: 'No token provided' });
@@ -42,20 +42,22 @@ const userRoutes = require('./routes/users');
 const appointmentRoutes = require('./routes/appointments');
 const prescriptionRoutes = require('./routes/prescriptions');
 const chatRoutes = require('./routes/chat');
+const patientInfoRouter = require('./routes/patient_info');
 
 app.use('/auth', authRoutes);
 app.use('/users', authenticate, userRoutes);
 app.use('/appointments', authenticate, appointmentRoutes);
 app.use('/prescriptions', authenticate, prescriptionRoutes);
 app.use('/chat', authenticate, chatRoutes);
-
-// **Mount the available-appointments router after "authenticate" is defined**
-const availableAppointmentsRouter = require('./routes/available_appointments');
-app.use('/available-appointments', authenticate, availableAppointmentsRouter);
+app.use('/patient_info', authenticate, patientInfoRouter);
 
 // New messages endpoint (for retrieving chat history)
 const messagesRouter = require('./routes/messages');
 app.use('/messages', authenticate, messagesRouter);
+
+// Available appointments router (if used)
+const availableAppointmentsRouter = require('./routes/available_appointments');
+app.use('/available-appointments', authenticate, availableAppointmentsRouter);
 
 // WebSocket connections map (userId -> socket)
 const clients = new Map();

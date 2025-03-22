@@ -69,7 +69,7 @@ class AppointmentsTab(QWidget):
         self.table.setSelectionMode(QTableWidget.SingleSelection)
         self.table.cellClicked.connect(self.on_row_selected)
 
-        # Layout for the main title and table
+        # Main layout for title and table
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(30, 30, 30, 30)
         main_layout.setSpacing(20)
@@ -83,12 +83,12 @@ class AppointmentsTab(QWidget):
         # Spacer to push form toward bottom
         main_layout.addItem(QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
-        # Doctor or Patient appointment form
+        # Appointment form layout (Doctor or Patient)
         if self.is_doctor:
             form_layout = QHBoxLayout()
             form_layout.setSpacing(10)
             
-            # For doctors, allow rescheduling of selected appointment
+            # For doctors, allow rescheduling selected appointment
             form_layout.addWidget(QLabel("Reschedule selected:"))
             self.new_datetime_edit = QDateTimeEdit()
             self.new_datetime_edit.setCalendarPopup(True)
@@ -99,11 +99,16 @@ class AppointmentsTab(QWidget):
             self.update_btn = QPushButton("Update")
             form_layout.addWidget(self.update_btn)
             self.update_btn.clicked.connect(self.update_appointment)
+            
+            # Add a new button for viewing patient health info
+            self.view_info_btn = QPushButton("View Patient Info")
+            form_layout.addWidget(self.view_info_btn)
+            self.view_info_btn.clicked.connect(self.view_patient_info)
         else:
             form_layout = QHBoxLayout()
             form_layout.setSpacing(10)
             
-            # For patients, schedule a new appointment
+            # For patients, schedule new appointment
             self.doctor_combo = QComboBox()
             self.load_doctors()
             
@@ -248,3 +253,34 @@ class AppointmentsTab(QWidget):
                     qt_dt = QDateTime.fromString(dt_str, Qt.ISODate)
                 if qt_dt.isValid():
                     self.new_datetime_edit.setDateTime(qt_dt)
+
+    def view_patient_info(self):
+        """Fetch and display the patient's additional health information."""
+        if not self.is_doctor:
+            return
+        selected = self.table.currentRow()
+        if selected < 0 or not hasattr(self, 'appointments_data') or selected >= len(self.appointments_data):
+            QMessageBox.information(self, "No Selection", "Please select an appointment to view patient info.")
+            return
+        # Get the patient ID from the selected appointment data (assuming it's stored there)
+        appt = self.appointments_data[selected]
+        patient_id = appt.get("patient_id")
+        if not patient_id:
+            QMessageBox.warning(self, "Data Error", "Patient information is missing.")
+            return
+        try:
+            resp = requests.get(f"{config.API_URL}/patient_info?patientId={patient_id}",
+                                headers={"Authorization": f"Bearer {self.token}"}, timeout=5)
+            if resp.status_code == 200:
+                patient_info = resp.json()
+                info_text = (
+                    f"Age: {patient_info.get('age', 'N/A')}\n"
+                    f"Weight: {patient_info.get('weight', 'N/A')} kg\n"
+                    f"Allergies: {patient_info.get('allergies', 'None')}\n"
+                    f"Chronic Diseases: {patient_info.get('chronic_diseases', 'None')}"
+                )
+                QMessageBox.information(self, "Patient Health Info", info_text)
+            else:
+                QMessageBox.warning(self, "Error", "Could not retrieve patient information.")
+        except Exception as e:
+            QMessageBox.critical(self, "Network Error", f"Error: {e}")
